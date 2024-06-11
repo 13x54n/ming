@@ -32,3 +32,8 @@ Server response: this is a test!
  ```bash
 sudo nano /etc/nginx/sites-available/tcp_server
  ```
+
+ Connecting to server using SSH Tuneling for TCP. Note: Make sure the JSON Request generates error while connecting using SSH.
+ ```bash
+sudo ssh -L 3000:localhost:3000 user@192.168.2.27 -p 3000
+ ```
