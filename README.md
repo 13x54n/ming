@@ -28,3 +28,7 @@ lexy@Lex-World:~/Documents/projects/ming$ bun client.js
 Connected to the relay server
 Server response: this is a test!
 ```
+ NGINX Working directory:
+ ```bash
+sudo nano /etc/nginx/sites-available/tcp_server
+ ```

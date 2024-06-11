@@ -6,7 +6,7 @@ const clients = new Map();
 /**
  * @header TCP server
  */
-const server = net.createServer((socket) => {
+const server = net.createServer({ allowHalfOpen: true }, (socket) => {
   /**
    * @dev add authentication or validation method in order to add clients to provide the hosting
    */

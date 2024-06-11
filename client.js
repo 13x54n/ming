@@ -3,6 +3,8 @@ const net = require('net');
 function connectToServer() {
   const client = new net.Socket();
 
+  console.log('Connecting to the relay server...');
+
   /**
    * @note Connection establishing to the server must be 
    * dynamic and not just localhost 
@@ -35,6 +37,7 @@ function connectToServer() {
   client.on('error', (err) => {
     console.error('Connection error:', err.message);
     // Retry connection after 2 seconds
+    console.log('Retrying connection in 2 seconds...');
     setTimeout(connectToServer, 2000);
   });
 
