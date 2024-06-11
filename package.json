@@ -5,13 +5,17 @@
   "main": "client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "init-server": "nodemon server.js",
+    "init-client": "nodemon client.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "net": "^1.0.2",
-    "ngrok": "^5.0.0-beta.2"
+    "net": "^1.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.3"
   }
 }

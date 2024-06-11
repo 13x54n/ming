@@ -12,7 +12,7 @@ const server = net.createServer({ allowHalfOpen: true }, (socket) => {
    */
   const clientId = nextClientId++;
   clients.set(clientId, socket);
-  console.log(`Client ${clientId} connected`);
+  console.log(`💻 Client ${clientId} connected.`);
 
   /**
    * @version: lts
@@ -34,7 +34,7 @@ const server = net.createServer({ allowHalfOpen: true }, (socket) => {
          * @note both key {result, customPayload} are just vairables||params
          **/
         result: `Hello, Client ${clientId}!`,
-        customPayload: "this is a test!",
+        customPayload: `👋 Hello, Client ${clientId}!`,
       };
       socket.write(JSON.stringify(response));
     }
@@ -46,7 +46,7 @@ const server = net.createServer({ allowHalfOpen: true }, (socket) => {
    */
   socket.on("end", () => {
     clients.delete(clientId);
-    console.log(`Client ${clientId} disconnected`);
+    console.log(`❌ Client ${clientId} disconnected`);
   });
 });
 
@@ -54,5 +54,5 @@ const server = net.createServer({ allowHalfOpen: true }, (socket) => {
  * @note Start the TCP server on port 3000 by default or you can pass it to environment
  */
 server.listen(process.env.PORT || 3000, () => {
-  console.log("JSON-RPC server is running on port 3000");
+  console.log("🔋 JSON-RPC based TCP Server running on port 3000!");
 });
