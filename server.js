@@ -13,7 +13,7 @@ const server = net.createServer({ allowHalfOpen: true }, (socket) => {
    * @version: lts
    * @documentation all the incoming messages are handled in this chain
    */
-  socket.on("authentication", (data) => {
+  socket.on("data", (data) => {
     const request = JSON.parse(data.toString());
 
     /**

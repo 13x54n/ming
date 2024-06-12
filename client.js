@@ -36,16 +36,15 @@ function connectToServer() {
   );
 
   /**
-   * @documentaiton on 'authentication' method every incoming data from server is handled
+   * @documentaiton on 'data' method every incoming data from server is handled
    * */
-  client.on("authentication", (data) => {
+  client.on("data", (data) => {
     const response = JSON.parse(data.toString());
     console.log("💻 Server response:", response.result);
   });
 
   // @note Handle connection errors
   client.on("error", (err) => {
-    console.log(err)
     console.error("🚨 Connection error:", err.message, "!");
     // Retry connection after 2 seconds
     console.log("🔥 Retrying connection in 2 seconds...");
