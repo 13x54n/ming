@@ -2,18 +2,18 @@ const net = require("net");
 const { showProjectInfo } = require("./modules/projectInfo");
 
 const clients = new Map();
+let clientId; // Declare clientId variable in the scope of the server callback function
 
 /**
  * @header TCP server
  */
 const server = net.createServer({ allowHalfOpen: true }, (socket) => {
-  let clientId; // Declare clientId variable in the scope of the server callback function
 
   /**
    * @version: lts
    * @documentation all the incoming messages are handled in this chain
    */
-  socket.on("data", (data) => {
+  socket.on("authentication", (data) => {
     const request = JSON.parse(data.toString());
 
     /**
