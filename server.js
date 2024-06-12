@@ -54,10 +54,8 @@ const server = net.createServer({ allowHalfOpen: true }, (socket) => {
 /**
  * @note Start the TCP server on port 3000 by default or you can pass it to environment
  */
-server.listen(process.env.PORT || 3000, () => {
-  showProjectInfo()
+showProjectInfo();
 
+server.listen(process.env.PORT || 3000, () => {
   console.log("\n📜 Server LOGS: ");
 });
-
-console.log(process.env.PORT)

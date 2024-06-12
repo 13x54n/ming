@@ -1,10 +1,10 @@
 const net = require("net");
 const { showProjectInfo } = require("./modules/projectInfo");
 
+showProjectInfo();
+
 function connectToServer() {
   const client = new net.Socket();
-
-  showProjectInfo()
 
   console.log("\n🔗 Connection Setup:");
   console.log("⌛ Connecting to the TCP Server...");
