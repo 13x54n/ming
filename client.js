@@ -1,49 +1,59 @@
-const net = require('net');
+const net = require("net");
+const { showProjectInfo } = require("./modules/projectInfo");
 
 function connectToServer() {
   const client = new net.Socket();
 
-  console.log('⌛ Connecting to the TCP Server...');
+  showProjectInfo()
+
+  console.log("\n🔗 Connection Setup:");
+  console.log("⌛ Connecting to the TCP Server...");
 
   /**
-   * @note Connection establishing to the server must be 
-   * dynamic and not just localhost 
+   * @note Connection establishing to the server must be
+   * dynamic and not just localhost
    * */
-  client.connect(process.env.PORT || 3000, process.env.TCP_SERVER_IP || 'localhost', () => {
-    console.log('😎 Connected to the TCP Server...');
+  client.connect(
+    process.env.PORT || 3000,
+    process.env.TCP_SERVER_IP || "localhost",
+    () => {
+      console.log("😎 Connected to the TCP Server...");
 
-    // Send JSON-RPC request
-    const request = {
-      jsonrpc: '2.0',
-      method: 'greet',
-      params: [],
-      /**
-       * @dev id: 1 means i expects reponse from server else id: null
-       */
-      id: 1
-    };
-    client.write(JSON.stringify(request));
-  });
+      console.log("\n📜 Client LOGS: ");
+
+      // Send JSON-RPC request
+      const request = {
+        jsonrpc: "2.0",
+        method: "greet",
+        params: [process.env.NODE_PUBLIC_ADDRESS],
+        /**
+         * @dev id: 1 means i expects reponse from server else id: null
+         */
+        id: 1,
+      };
+      client.write(JSON.stringify(request));
+    }
+  );
 
   /**
    * @documentaiton on 'data' method every incoming data from server is handled
    * */
-  client.on('data', (data) => {
+  client.on("data", (data) => {
     const response = JSON.parse(data.toString());
-    console.log('💻 Server response:', response.customPayload);
+    console.log("💻 Server response:", response.result);
   });
 
   // @note Handle connection errors
-  client.on('error', (err) => {
-    console.error('Connection error:', err.message);
+  client.on("error", (err) => {
+    console.error("🚨 Connection error:", err.message, "!");
     // Retry connection after 2 seconds
-    console.log('🔥 Retrying connection in 2 seconds...');
+    console.log("🔥 Retrying connection in 2 seconds...");
     setTimeout(connectToServer, 2000);
   });
 
   // @note Handle server disconnection
-  client.on('end', () => {
-    console.log('🚨 Connection closed by server');
+  client.on("end", () => {
+    console.log("🚨 Connection closed by server!");
     // @warning Do not retry connection here
   });
 }
