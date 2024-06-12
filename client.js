@@ -9,7 +9,7 @@ function connectToServer() {
    * @note Connection establishing to the server must be 
    * dynamic and not just localhost 
    * */
-  client.connect(3000, '127.0.0.1', () => {
+  client.connect(process.env.PORT || 3000, process.env.TCP_SERVER_IP || 'localhost', () => {
     console.log('😎 Connected to the TCP Server...');
 
     // Send JSON-RPC request
