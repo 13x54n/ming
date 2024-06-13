@@ -1,61 +1,32 @@
-require("dotenv").config();
-const net = require("net");
-const { showProjectInfo } = require("./modules/projectInfo");
+const net = require('net');
+const port = 7070;
+const host = '127.0.0.1';
 
-const clients = new Map();
-let clientId; // Declare clientId variable in the scope of the server callback function
-
-/**
- * @header TCP server
- */
-const server = net.createServer({ allowHalfOpen: true }, (socket) => {
-  /**
-   * @version: lts
-   * @documentation all the incoming messages are handled in this chain
-   */
-  socket.on("data", (data) => {
-    const request = JSON.parse(data.toString());
-
-    /**
-     * @dev add authentication or validation method in order to add clients to provide the hosting
-     */
-    clientId = request.params[0];
-    clients.set(clientId, socket);
-    console.log(`💻 Client ${clientId} connected.`);
-
-    /**
-     * @note static routing used can be upgraded
-     * @description checks the req method is greet and sends the response with clients id
-     * but it should be more cryptographic later for better security and privacy.
-     */
-    if (request.method === "greet") {
-      const response = {
-        jsonrpc: "2.0",
-        id: request.id,
-        /**
-         * @note {result} is just vairable||param so it can be named anything.
-         **/
-        result: `👋 Hello, ${clientId}!`,
-      };
-      socket.write(JSON.stringify(response));
-    }
-  });
-
-  /**
-   * @note current version do not sync with closing nodes for now
-   * instead log which client was disconnected
-   */
-  socket.on("end", () => {
-    clients.delete(clientId);
-    console.log(`❌ Client ${clientId} disconnected`);
-  });
+const server = net.createServer();
+server.listen(port, host, () => {
+    console.log('TCP Server is running on port ' + port + '.');
 });
 
-/**
- * @note Start the TCP server on port 3000 by default or you can pass it to environment
- */
-showProjectInfo();
+let sockets = [];
 
-server.listen(process.env.PORT || 3000, () => {
-  console.log("\n📜 Server LOGS: ");
+server.on('connection', function(sock) {
+    console.log('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
+    sockets.push(sock);
+
+    sock.on('data', function(data) {
+        console.log('DATA ' + sock.remoteAddress + ': ' + data);
+        // Write the data back to all the connected, the client will receive it as data from the server
+        sockets.forEach(function(sock, index, array) {
+            sock.write(sock.remoteAddress + ':' + sock.remotePort + " said " + data + '\n');
+        });
+    });
+
+    // Add a 'close' event handler to this instance of socket
+    sock.on('close', function(data) {
+        let index = sockets.findIndex(function(o) {
+            return o.remoteAddress === sock.remoteAddress && o.remotePort === sock.remotePort;
+        })
+        if (index !== -1) sockets.splice(index, 1);
+        console.log('CLOSED: ' + sock.remoteAddress + ' ' + sock.remotePort);
+    });
 });
