@@ -1,3 +1,4 @@
+require("dotenv").config();
 const net = require("net");
 const { showProjectInfo } = require("./modules/projectInfo");
 
@@ -8,7 +9,6 @@ let clientId; // Declare clientId variable in the scope of the server callback f
  * @header TCP server
  */
 const server = net.createServer({ allowHalfOpen: true }, (socket) => {
-
   /**
    * @version: lts
    * @documentation all the incoming messages are handled in this chain
