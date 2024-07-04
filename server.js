@@ -1,5 +1,5 @@
 /**
- * @author: Lexy
+ * @author: Lexy <not.so.lexy@gmail.com>
  */
 const cluster = require("cluster");
 const net = require("net"); // tcp

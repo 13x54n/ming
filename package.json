@@ -2,15 +2,16 @@
   "name": "ming",
   "version": "1.0.0",
   "description": "",
+  "author": "Lexy <not.so.lexy@gmail.com>",
   "main": "client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "init-server": "nodemon server.js",
-    "init-client": "nodemon client.js"
+    "init-client": "nodemon client.js",
+    "build-image": "docker build -t ming ."
   },
   "keywords": [],
-  "author": "",
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.4.5",
