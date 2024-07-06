@@ -1,7 +1,8 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { MetaMaskProvider } from "@metamask/sdk-react";
+import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
+import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import "./index.css";
 import "remixicon/fonts/remixicon.css";
 
@@ -24,18 +25,14 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <MetaMaskProvider
-        debug={false}
-        sdkOptions={{
-          dappMetadata: {
-            name: "Ming | Distributed System for Developers by Developers",
-            url: window.location.href,
-          },
-          infuraAPIKey: import.meta.env.VITE_INFURA_API_KEY,
+      <DynamicContextProvider
+        settings={{
+          environmentId: "5dfdf4a3-7176-488d-a89a-8266cdef72a2",
+          walletConnectors: [EthereumWalletConnectors],
         }}
       >
         <RouterProvider router={router} />
-      </MetaMaskProvider>
+      </DynamicContextProvider>
     </StrictMode>
   );
 }

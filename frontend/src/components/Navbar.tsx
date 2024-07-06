@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -26,8 +26,11 @@ import {
   PhoneIcon,
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
-import Identicon from "react-identicons";
-import { useSDK } from "@metamask/sdk-react";
+import {
+  DynamicConnectButton,
+  DynamicWidget,
+  useIsLoggedIn,
+} from "@dynamic-labs/sdk-react-core";
 
 const products = [
   {
@@ -68,73 +71,7 @@ const callsToAction = [
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [account, setAccount] = useState<string>();
-  const { sdk, connected, connecting, provider, chainId } = useSDK();
-  const [isConnecting, setIsConnecting] = useState<boolean>(false);
-
-  const connect = async () => {
-    setIsConnecting(true);
-    try {
-      const accounts = await sdk?.connect();
-      localStorage.setItem("ming_is_wallet_persistent", "true");
-      setAccount(accounts?.[0]);
-    } catch (err) {
-      console.warn("failed to connect..", err);
-    }
-    setIsConnecting(false);
-  };
-
-  const disconnectWallet = async () => {
-    try {
-      await sdk?.disconnect();
-      localStorage.removetItem("ming_is_wallet_persistent");
-    } catch (error) {
-      console.warn("failed to disconnect..", error);
-    }
-  };
-
-  /**
-   * @documentation The following useEffect hook works in following order:
-   * 1. Check if wallet is already connected
-   * 2. Connect to Metamask SDK
-   * 3. If true then get the wallet public address from Metamask
-   * 4. Assign response account to variable
-   * 
-   * @dev but this won't work for mobile devices
-   */
-  useEffect(() => {
-    const isWalletPersistent = localStorage.getItem(
-      "ming_is_wallet_persistent"
-    );
-
-    setIsConnecting(true);
-    if (isWalletPersistent === "true") {
-      (async () => {
-        try {
-          if (!window.ethereum) {
-            console.log(
-              "Please install MetaMask or another Ethereum provider."
-            );
-            return;
-          }
-
-          await sdk?.connect();
-
-          const accounts: any = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
-          setAccount(accounts?.[0]);
-        } catch (err: any) {
-          if (err?.code === 4001) {
-            console.log("Please connect to MetaMask.");
-          } else {
-            console.error("Failed to connect:", err);
-          }
-        }
-      })();
-      setIsConnecting(false);
-    }
-  }, []);
+  const isLoggedIn = useIsLoggedIn();
 
   return (
     <header className="bg-white border-b-2">
@@ -223,32 +160,14 @@ export default function Navbar() {
           </a>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          {isConnecting ? (
-            <>Connecting Wallet...</>
-          ) : connected ? (
-            <div className="flex items-center gap-2">
-              <div className="bg-gray-100 flex items-center font-semibold rounded-lg p-2 text-sm gap-2">
-                <Identicon
-                  string={account}
-                  size={20}
-                  className="border-2 border-gray-300"
-                />
-                <p>
-                  {account &&
-                    account.substring(0, 6) + "..." + account.slice(-3)}
-                </p>
-              </div>
-              <button
-                className="flex items-center gap-1 bg-black text-white logoText px-2 py-1 rounded-lg"
-                onClick={() => disconnectWallet()}
-              >
-                <i className="ri-logout-circle-r-line"></i> Disconnect
-              </button>
+          {isLoggedIn ? (
+            <div className="border-2 border-gray-500 rounded-lg">
+              <DynamicWidget />
             </div>
           ) : (
-            <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-              Connect
-            </button>
+            <DynamicConnectButton buttonClassName="bg-black text-white logoText p-2 py-1 rounded-lg">
+              🦊 Connect
+            </DynamicConnectButton>
           )}
         </div>
       </nav>
@@ -258,15 +177,11 @@ export default function Navbar() {
         className="lg:hidden"
       >
         <div className="fixed inset-0 z-10" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+        <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-4 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
-            <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <img
-                alt=""
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-              />
+            <a href="#" className="-m-1.5 p-1.5 flex items-center gap-2">
+              <img alt="" src="/logo.png" className="h-8 w-auto" />
+              <span className="logoText text-2xl">Ming</span>
             </a>
             <button
               type="button"
@@ -321,32 +236,14 @@ export default function Navbar() {
                 </a>
               </div>
               <div className="py-6">
-                {isConnecting ? (
-                  <>Connecting Wallet...</>
-                ) : connected ? (
-                  <div className="flex items-center gap-2">
-                    <div className="bg-gray-100 flex items-center font-semibold rounded-lg p-2 text-sm gap-2">
-                      <Identicon
-                        string={account}
-                        size={20}
-                        className="border-2 border-gray-300"
-                      />
-                      <p>
-                        {account &&
-                          account.substring(0, 6) + "..." + account.slice(-3)}
-                      </p>
-                    </div>
-                    <button
-                      className="flex items-center gap-1 bg-black text-white logoText px-2 py-1 rounded-lg"
-                      onClick={() => disconnectWallet()}
-                    >
-                      <i className="ri-logout-circle-r-line"></i> Disconnect
-                    </button>
+                {isLoggedIn ? (
+                  <div className="border-2 border-gray-500 rounded-lg">
+                    <DynamicWidget />
                   </div>
                 ) : (
-                  <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-                    Connect
-                  </button>
+                  <DynamicConnectButton buttonClassName="bg-black text-white logoText p-2 py-1 rounded-lg">
+                    🦊 Connect
+                  </DynamicConnectButton>
                 )}
               </div>
             </div>
