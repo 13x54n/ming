@@ -15,7 +15,9 @@
     "@metamask/sdk-react": "^0.26.4",
     "@tanstack/react-router": "^1.43.10",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-identicons": "^1.2.5",
+    "remixicon": "^4.3.0"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.43.10",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -26,6 +26,7 @@ import {
   PhoneIcon,
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
+import Identicon from "react-identicons";
 import { useSDK } from "@metamask/sdk-react";
 
 const products = [
@@ -69,21 +70,77 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [account, setAccount] = useState<string>();
   const { sdk, connected, connecting, provider, chainId } = useSDK();
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
   const connect = async () => {
+    setIsConnecting(true);
     try {
       const accounts = await sdk?.connect();
+      localStorage.setItem("ming_is_wallet_persistent", "true");
       setAccount(accounts?.[0]);
     } catch (err) {
       console.warn("failed to connect..", err);
     }
+    setIsConnecting(false);
   };
 
+  const disconnectWallet = async () => {
+    try {
+      await sdk?.disconnect();
+      localStorage.removetItem("ming_is_wallet_persistent");
+    } catch (error) {
+      console.warn("failed to disconnect..", error);
+    }
+  };
+
+  /**
+   * @documentation The following useEffect hook works in following order:
+   * 1. Check if wallet is already connected
+   * 2. Connect to Metamask SDK
+   * 3. If true then get the wallet public address from Metamask
+   * 4. Assign response account to variable
+   * 
+   * @dev but this won't work for mobile devices
+   */
+  useEffect(() => {
+    const isWalletPersistent = localStorage.getItem(
+      "ming_is_wallet_persistent"
+    );
+
+    setIsConnecting(true);
+    if (isWalletPersistent === "true") {
+      (async () => {
+        try {
+          if (!window.ethereum) {
+            console.log(
+              "Please install MetaMask or another Ethereum provider."
+            );
+            return;
+          }
+
+          await sdk?.connect();
+
+          const accounts: any = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          setAccount(accounts?.[0]);
+        } catch (err: any) {
+          if (err?.code === 4001) {
+            console.log("Please connect to MetaMask.");
+          } else {
+            console.error("Failed to connect:", err);
+          }
+        }
+      })();
+      setIsConnecting(false);
+    }
+  }, []);
+
   return (
-    <header className="bg-white">
+    <header className="bg-white border-b-2">
       <nav
         aria-label="Global"
-        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between p-6 py-4 lg:px-8"
       >
         <div className="flex lg:flex-1">
           <a href="#" className="-m-1.5 p-1.5 flex items-center gap-2">
@@ -103,7 +160,7 @@ export default function Navbar() {
         </div>
         <PopoverGroup className="hidden lg:flex lg:gap-x-12">
           <Popover className="relative">
-            <PopoverButton className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
+            <PopoverButton className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 focus:outline-none">
               Product
               <ChevronDownIcon
                 aria-hidden="true"
@@ -164,18 +221,29 @@ export default function Navbar() {
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
             Marketplace
           </a>
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Company
-          </a>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          {connected ? (
-            <div>
-              <>
-                {chainId && `Connected chain: ${chainId}`}
-                <p></p>
-                {account && `Connected account: ${account}`}
-              </>
+          {isConnecting ? (
+            <>Connecting Wallet...</>
+          ) : connected ? (
+            <div className="flex items-center gap-2">
+              <div className="bg-gray-100 flex items-center font-semibold rounded-lg p-2 text-sm gap-2">
+                <Identicon
+                  string={account}
+                  size={20}
+                  className="border-2 border-gray-300"
+                />
+                <p>
+                  {account &&
+                    account.substring(0, 6) + "..." + account.slice(-3)}
+                </p>
+              </div>
+              <button
+                className="flex items-center gap-1 bg-black text-white logoText px-2 py-1 rounded-lg"
+                onClick={() => disconnectWallet()}
+              >
+                <i className="ri-logout-circle-r-line"></i> Disconnect
+              </button>
             </div>
           ) : (
             <button style={{ padding: 10, margin: 10 }} onClick={connect}>
@@ -253,13 +321,27 @@ export default function Navbar() {
                 </a>
               </div>
               <div className="py-6">
-                {connected ? (
-                  <div>
-                    <>
-                      {chainId && `Connected chain: ${chainId}`}
-                      <p></p>
-                      {account && `Connected account: ${account}`}
-                    </>
+                {isConnecting ? (
+                  <>Connecting Wallet...</>
+                ) : connected ? (
+                  <div className="flex items-center gap-2">
+                    <div className="bg-gray-100 flex items-center font-semibold rounded-lg p-2 text-sm gap-2">
+                      <Identicon
+                        string={account}
+                        size={20}
+                        className="border-2 border-gray-300"
+                      />
+                      <p>
+                        {account &&
+                          account.substring(0, 6) + "..." + account.slice(-3)}
+                      </p>
+                    </div>
+                    <button
+                      className="flex items-center gap-1 bg-black text-white logoText px-2 py-1 rounded-lg"
+                      onClick={() => disconnectWallet()}
+                    >
+                      <i className="ri-logout-circle-r-line"></i> Disconnect
+                    </button>
                   </div>
                 ) : (
                   <button style={{ padding: 10, margin: 10 }} onClick={connect}>
