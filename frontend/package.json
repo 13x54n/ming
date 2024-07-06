@@ -10,14 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dynamic-labs/ethereum": "^2.2.10",
+    "@dynamic-labs/sdk-react-core": "^2.2.10",
     "@headlessui/react": "^2.1.1",
     "@heroicons/react": "^2.1.4",
-    "@metamask/sdk-react": "^0.26.4",
     "@tanstack/react-router": "^1.43.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-identicons": "^1.2.5",
-    "remixicon": "^4.3.0"
+    "remixicon": "^4.3.0",
+    "viem": "^2.17.1"
   },
   "devDependencies": {
     "@tanstack/router-devtools": "^1.43.10",

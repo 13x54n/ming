@@ -1,21 +1,21 @@
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { useSDK } from "@metamask/sdk-react";
 import Navbar from "../components/Navbar";
+import { useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
 
 export const Route = createRootRoute({
   component: () => {
-    const { connected } = useSDK();
+    const isLoggedIn = useIsLoggedIn();
 
     return (
       <>
         <Navbar />
-        {connected ? (
+        {isLoggedIn ? (
           <>
             <Outlet />
           </>
         ) : (
-          <></>
+          <>This is unAuthenticated home page</>
         )}
         <TanStackRouterDevtools />
       </>
