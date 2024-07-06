@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+import { Analytics } from "@vercel/analytics/react";
 import "./index.css";
 import "remixicon/fonts/remixicon.css";
 
@@ -33,6 +34,7 @@ if (!rootElement.innerHTML) {
       >
         <RouterProvider router={router} />
       </DynamicContextProvider>
+      <Analytics />
     </StrictMode>
   );
 }
