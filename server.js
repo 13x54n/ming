@@ -1,5 +1,5 @@
 /**
- * @author: Lexy <not.so.lexy@gmail.com>
+ * @author: Lexy <not.so.lexy@gmail.com, 13x54n>
  */
 const cluster = require("cluster");
 const net = require("net"); // tcp
@@ -25,7 +25,15 @@ if (cluster.isMaster) {
 } else {
   // Code for TCP server inside each worker
   const server = net.createServer();
-  server.maxConnections = 10; // Example: limit to 10 concurrent connections
+  /**
+   * Determining the ideal maximum number of connections (server.maxConnections) for a TCP server
+   * depends on various factors including hardware resources, expected workload, and the nature of
+   * the application.
+   * Here are some considerations to help determine an appropriate server.maxConnections value:
+   *
+   * server.maxConnections=numCPUs×connections per core=4×50=200
+   */
+  server.maxConnections = 100;
 
   server.listen(port, host, () => {
     console.log(
@@ -37,7 +45,9 @@ if (cluster.isMaster) {
 
   server.on("connection", function (sock) {
     if (sockets.length >= server.maxConnections) {
-      // Handle exceeding max connections (e.g., reject new connections)
+      /**
+       * Handle exceeding max connections -> reject new connections, but better algorithm can be implemented
+       */
       console.log(
         `Worker ${process.pid}: Max connections reached. Rejecting new connection from ${sock.remoteAddress}`
       );
@@ -46,16 +56,18 @@ if (cluster.isMaster) {
     }
 
     console.log(
-      `Worker ${process.pid}: CONNECTED: ${sock.remoteAddress}:${sock.remotePort}`
+      `Worker ${process.pid}: CONNECTED: ${sock.remoteAddress}:${sock.remotePort}`// this should be user public address
     );
     sockets.push(sock);
 
     sock.on("data", function (data) {
-      console.log(`Worker ${process.pid}: DATA ${sock.remoteAddress}: ${data}`);
+      // console.log(`Worker ${process.pid}: DATA ${sock.remoteAddress}: ${data}`);
       // Write the data back to all the connected clients
       sockets.forEach(function (sock, index, array) {
         sock.write(`${sock.remoteAddress}:${sock.remotePort} said ${data}\n`);
       });
+
+      // @dev receive socket information
     });
 
     // Add a 'close' event handler to this instance of socket

@@ -2,23 +2,47 @@
  * @author: Lexy
  */
 const net = require("net");
-const client = new net.Socket();
-const port = 7070;
-const host = "127.0.0.1";
+const express = require("express");
 
-client.connect(port, host, function () {
-  console.log("Connected to server");
-  client.write("Hello From Client " + client.address().address);
+const app = express();
+const TCP_PORT = 12620;
+const TCP_HOST = "0.tcp.ngrok.io";
+
+const tcpClient = new net.Socket();
+tcpClient.connect(TCP_PORT, TCP_HOST, () => {
+  console.log("Connected to TCP server");
 });
 
-client.on("data", function (data) {
-  console.log("Received from server: " + data);
+tcpClient.on("data", (data) => {
+  // console.log(`Received from main server: ${data}`);
+  // data should be in stringified json format
+
+  // convert stringfied json into json 
+
+  // switch case should be handled here
 });
 
-client.on("close", function () {
-  console.log("Connection to Server Closed, Server might be down!");
+tcpClient.on("close", () => {
+  console.log("Connection to TCP Server Closed");
 });
 
-client.on("error", function (err) {
-  console.error("Error: " + err.message);
+tcpClient.on("error", (err) => {
+  console.error(`TCP Client Error: ${err.message}`);
+});
+
+// Example endpoint to send data to TCP server
+app.post("/sendToTcpServer", (req, res) => {
+  const message = req.body.message;
+
+  // Send message to TCP server
+  tcpClient.write(message, () => {
+    console.log(`Sent to TCP server: ${message}`);
+    res.status(200).json({ message: "Sent to TCP server" });
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
