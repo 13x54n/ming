@@ -7,3 +7,12 @@
 .logoText {
   font-family: "Tiny5", sans-serif;
 }
+
+html{
+background: #000;
+color: #fff;
+}
+
+*{
+  color: #fff;
+}

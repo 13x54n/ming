@@ -27,6 +27,7 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <DynamicContextProvider
+      theme="dark"
         settings={{
           environmentId: "5dfdf4a3-7176-488d-a89a-8266cdef72a2",
           walletConnectors: [EthereumWalletConnectors],
