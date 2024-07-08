@@ -5,8 +5,9 @@ const net = require("net");
 const express = require("express");
 
 const app = express();
-const TCP_PORT = 12620;
-const TCP_HOST = "0.tcp.ngrok.io";
+app.use(require("cors")());
+const TCP_PORT = 18943;
+const TCP_HOST = "2.tcp.ngrok.io";
 
 const tcpClient = new net.Socket();
 tcpClient.connect(TCP_PORT, TCP_HOST, () => {
@@ -16,9 +17,7 @@ tcpClient.connect(TCP_PORT, TCP_HOST, () => {
 tcpClient.on("data", (data) => {
   // console.log(`Received from main server: ${data}`);
   // data should be in stringified json format
-
-  // convert stringfied json into json 
-
+  // convert stringfied json into json
   // switch case should be handled here
 });
 
@@ -32,10 +31,23 @@ tcpClient.on("error", (err) => {
 
 // Example endpoint to send data to TCP server
 app.post("/sendToTcpServer", (req, res) => {
-  const message = req.body.message;
+  // const message = req.body.message;
+  const message = "Hello, Ming!";
 
   // Send message to TCP server
   tcpClient.write(message, () => {
+    if (!tcpClient.writable) {
+      console.log(
+        "Server might be dead! Restarting both client & server might help."
+      );
+      return res
+        .status(500)
+        .json({
+          error:
+            "Server might be dead! Restarting both client & server might help.",
+        });
+    }
+
     console.log(`Sent to TCP server: ${message}`);
     res.status(200).json({ message: "Sent to TCP server" });
   });
