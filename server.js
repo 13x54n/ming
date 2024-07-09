@@ -63,10 +63,11 @@ if (cluster.isMaster) {
       // @dev socket connection must only be listed if node is authorized
       sockets.push(sock);
       console.log(`Worker ${process.pid}: DATA ${sock.remoteAddress}: ${data}`);
+
       // Write the data back to all the connected clients
-      // sockets.forEach(function (sock, index, array) {
-        // sock.write(`${sock.remoteAddress}:${sock.remotePort} said ${data}\n`);
-      // });
+      sockets.forEach(function (sock, index, array) {
+        sock.write(`${sock.remoteAddress}:${sock.remotePort} said ${data}\n`);
+      });
 
       // @dev receive socket information
       // switch(data){
