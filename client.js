@@ -11,7 +11,7 @@ tcpClient.connect(TCP_PORT, TCP_HOST, () => {
 });
 
 tcpClient.on("data", (data) => {
-  console.log(`Received from main server: ${data}`);
+  console.log(`${data}`);
 });
 
 tcpClient.on("close", () => {
@@ -35,9 +35,14 @@ wss.on("connection", (ws) => {
   console.log("Client connected");
 
   ws.on("message", async (data) => {
-    console.log("Received message from client:", data);
-    // You can handle the received message here
-
+    /** 
+     * data format 
+     * {
+     *    method_name: string,
+     *    payload:,
+     *    from: Lexy 
+     * }
+     */
     try {
       const bufferData = Buffer.from(data);
       const bufferString = bufferData.toString("utf8");
@@ -45,20 +50,19 @@ wss.on("connection", (ws) => {
 
       console.log("Parsed JSON object:", jsonObject);
 
-      // tcpClient.write(message, () => {
-      //   if (!tcpClient.writable) {
-      //     console.log(
-      //       "Server might be dead! Restarting both client & server might help."
-      //     );
-      //     return res.status(500).json({
-      //       error:
-      //         "Server might be dead! Restarting both client & server might help.",
-      //     });
-      //   }
+      tcpClient.write(data, () => {
+        if (!tcpClient.writable) {
+          console.log(
+            "Server might be dead! Restarting both client & server might help."
+          );
+          return res.status(500).json({
+            error:
+              "Server might be dead! Restarting both client & server might help.",
+          });
+        }
 
-      //   console.log(`Sent to TCP server: ${message}`);
-      //   res.status(200).json({ message: "Sent to TCP server" });
-      // });
+        console.log(`Sent to TCP server: ${data}`);
+      });
 
       // Handle the jsonObject as needed
     } catch (error) {
