@@ -60,8 +60,6 @@ if (cluster.isMaster) {
       `Worker ${process.pid}: CONNECTED: ${sock.remoteAddress}:${sock.remotePort}` // this should be user public address
     );
 
-    broadcastToAll("Hello, from Lexy!");
-
     sock.on("data", function (data) {
       // @dev socket connection must only be listed if node is authorized
       sockets.push(sock);
@@ -70,6 +68,7 @@ if (cluster.isMaster) {
       const bufferString = bufferData.toString("utf8");
       const jsonData = JSON.parse(bufferString);
 
+      broadcastToAll("Hello, from Lexy!", "\n", jsonData);
       /**
        * data format
        * {
