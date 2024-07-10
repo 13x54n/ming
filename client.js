@@ -1,12 +1,9 @@
 /**
- * @author: Lexy
+ * @author: Lexy <not.so.lexy@gmail.com, 13x54n>
  */
 const net = require("net");
-const express = require("express");
-
-const app = express();
-const TCP_PORT = 12620;
-const TCP_HOST = "0.tcp.ngrok.io";
+const TCP_PORT = 18943;
+const TCP_HOST = "2.tcp.ngrok.io";
 
 const tcpClient = new net.Socket();
 tcpClient.connect(TCP_PORT, TCP_HOST, () => {
@@ -14,12 +11,7 @@ tcpClient.connect(TCP_PORT, TCP_HOST, () => {
 });
 
 tcpClient.on("data", (data) => {
-  // console.log(`Received from main server: ${data}`);
-  // data should be in stringified json format
-
-  // convert stringfied json into json 
-
-  // switch case should be handled here
+  console.log(`${data}`);
 });
 
 tcpClient.on("close", () => {
@@ -30,19 +22,67 @@ tcpClient.on("error", (err) => {
   console.error(`TCP Client Error: ${err.message}`);
 });
 
-// Example endpoint to send data to TCP server
-app.post("/sendToTcpServer", (req, res) => {
-  const message = req.body.message;
+const WebSocket = require("ws");
 
-  // Send message to TCP server
-  tcpClient.write(message, () => {
-    console.log(`Sent to TCP server: ${message}`);
-    res.status(200).json({ message: "Sent to TCP server" });
-  });
+const WS_PORT = 8080;
+const wss = new WebSocket.Server({ port: WS_PORT });
+
+wss.on("listening", () => {
+  console.log(`WS Server: ws://localhost:${WS_PORT}`);
 });
 
-const PORT = process.env.PORT || 3000;
+wss.on("connection", (ws) => {
+  console.log("Client connected");
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  ws.on("message", async (data) => {
+    /** 
+     * data format 
+     * {
+     *    method_name: string,
+     *    payload:,
+     *    from: Lexy 
+     * }
+     */
+    try {
+      const bufferData = Buffer.from(data);
+      const bufferString = bufferData.toString("utf8");
+      const jsonObject = JSON.parse(bufferString);
+
+      console.log("Parsed JSON object:", jsonObject);
+
+      tcpClient.write(data, () => {
+        if (!tcpClient.writable) {
+          console.log(
+            "Server might be dead! Restarting both client & server might help."
+          );
+          return res.status(500).json({
+            error:
+              "Server might be dead! Restarting both client & server might help.",
+          });
+        }
+
+        console.log(`Sent to TCP server: ${data}`);
+      });
+
+      // Handle the jsonObject as needed
+    } catch (error) {
+      console.error("Error parsing JSON:", error.message);
+      // Handle parsing error or invalid data scenario
+    }
+  });
+
+  ws.on("close", () => {
+    console.log("Client disconnected");
+  });
+
+  ws.on("error", (error) => {
+    console.error("WebSocket error:", error);
+  });
+
+  // Example: Sending initial message to client
+  ws.send("Hello, client! This is the WebSocket server.");
+});
+
+wss.on("error", (error) => {
+  console.error("WebSocket server error:", error);
 });

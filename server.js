@@ -58,16 +58,24 @@ if (cluster.isMaster) {
     console.log(
       `Worker ${process.pid}: CONNECTED: ${sock.remoteAddress}:${sock.remotePort}`// this should be user public address
     );
-    sockets.push(sock);
-
+    
     sock.on("data", function (data) {
+      // @dev socket connection must only be listed if node is authorized
+      sockets.push(sock);
       // console.log(`Worker ${process.pid}: DATA ${sock.remoteAddress}: ${data}`);
+
+      sock.write(`${sock.remoteAddress}:${sock.remotePort} said ${data}, and Helllo, from Lexy!\n`);
       // Write the data back to all the connected clients
-      sockets.forEach(function (sock, index, array) {
-        sock.write(`${sock.remoteAddress}:${sock.remotePort} said ${data}\n`);
-      });
+      // sockets.forEach(function (sock) {
+      // });
 
       // @dev receive socket information
+      // switch(data){
+      //   case '':
+      //     return;
+      //   default:
+      //     return;
+      // }
     });
 
     // Add a 'close' event handler to this instance of socket
