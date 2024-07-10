@@ -12,8 +12,18 @@ tcpClient.connect(TCP_PORT, TCP_HOST, () => {
 });
 
 tcpClient.on("data", (data) => {
-  console.log(`Received from TCP server: ${data}`);
-  // Handle received data from TCP server as needed
+  try {
+    // Parse incoming data assuming it's JSON
+    const bufferData = Buffer.from(data);
+    const bufferString = bufferData.toString("utf8");
+    const jsonData = JSON.parse(bufferString);
+
+    console.log("This looks awesome now: ", jsonData);
+  } catch (error) {
+    console.error(
+      `Worker ${process.pid}: Error parsing JSON or handling message: ${error.message}`
+    );
+  }
 });
 
 tcpClient.on("close", () => {
@@ -51,9 +61,9 @@ wss.on("connection", (ws) => {
       wss.clients.forEach((client) => {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
           client.send(data);
+          console.log(client);
         }
       });
-
     } catch (error) {
       console.error("Error handling message:", error.message);
       // Handle error scenario
