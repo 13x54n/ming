@@ -25,9 +25,7 @@ tcpClient.on("error", (err) => {
 });
 
 // WebSocket Server Setup
-const wss = new WebSocket.Server({ port: WS_PORT });
-
-wss.on("listening", () => {
+const wss = new WebSocket.Server({ port: WS_PORT }, () => {
   console.log(`WS Server: ws://localhost:${WS_PORT}`);
 });
 
@@ -36,6 +34,8 @@ wss.on("connection", (ws) => {
 
   ws.on("message", async (data) => {
     try {
+      const message = JSON.parse(data); // Assuming data is JSON string
+
       // Forward message to TCP server
       tcpClient.write(data, () => {
         if (!tcpClient.writable) {
@@ -54,7 +54,6 @@ wss.on("connection", (ws) => {
         }
       });
 
-      // Handle the jsonObject as needed
     } catch (error) {
       console.error("Error handling message:", error.message);
       // Handle error scenario
