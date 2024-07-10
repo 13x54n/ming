@@ -44,12 +44,6 @@ wss.on("connection", (ws) => {
      * }
      */
     try {
-      const bufferData = Buffer.from(data);
-      const bufferString = bufferData.toString("utf8");
-      const jsonObject = JSON.parse(bufferString);
-
-      console.log("Parsed JSON object:", jsonObject);
-
       tcpClient.write(data, () => {
         if (!tcpClient.writable) {
           console.log(

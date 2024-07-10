@@ -60,20 +60,32 @@ if (cluster.isMaster) {
       `Worker ${process.pid}: CONNECTED: ${sock.remoteAddress}:${sock.remotePort}` // this should be user public address
     );
 
+    broadcastToAll("Hello, from Lexy!");
+
     sock.on("data", function (data) {
       // @dev socket connection must only be listed if node is authorized
       sockets.push(sock);
       // console.log(`Worker ${process.pid}: DATA ${sock.remoteAddress}: ${data}`);
+      const bufferData = Buffer.from(data);
+      const bufferString = bufferData.toString("utf8");
+      const jsonData = JSON.parse(bufferString);
 
-      sock.write(
-        `${sock.remoteAddress}:${sock.remotePort} said ${data}, and Helllo, from Lexy!\n`
-      );
+      /**
+       * data format
+       * {
+       *    method_name: string,
+       *    payload:,
+       *    from: Lexy
+       * }
+       */
+      switch (jsonData.method_name) {
+      }
+
+      // sock.write(
+      // `${sock.remoteAddress}:${sock.remotePort} said ${data}, and Helllo, from Lexy!\n`
+      // );
 
       // Write the data back to all the connected clients
-      sockets.forEach(function (sock) {
-        sock.write(`Helllo, from Lexy!\n`);
-      });
-
       // @dev receive socket information
       // switch(data){
       //   case '':
@@ -97,4 +109,11 @@ if (cluster.isMaster) {
       if (index !== -1) sockets.splice(index, 1);
     });
   });
+
+  // Function to broadcast message to all connected sockets
+  function broadcastToAll(message) {
+    sockets.forEach(function (socket) {
+      socket.write(message);
+    });
+  }
 }
