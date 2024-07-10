@@ -51,23 +51,28 @@ if (cluster.isMaster) {
       console.log(
         `Worker ${process.pid}: Max connections reached. Rejecting new connection from ${sock.remoteAddress}`
       );
+
       sock.destroy();
       return;
     }
 
     console.log(
-      `Worker ${process.pid}: CONNECTED: ${sock.remoteAddress}:${sock.remotePort}`// this should be user public address
+      `Worker ${process.pid}: CONNECTED: ${sock.remoteAddress}:${sock.remotePort}` // this should be user public address
     );
-    
+
     sock.on("data", function (data) {
       // @dev socket connection must only be listed if node is authorized
       sockets.push(sock);
       // console.log(`Worker ${process.pid}: DATA ${sock.remoteAddress}: ${data}`);
 
-      sock.write(`${sock.remoteAddress}:${sock.remotePort} said ${data}, and Helllo, from Lexy!\n`);
+      sock.write(
+        `${sock.remoteAddress}:${sock.remotePort} said ${data}, and Helllo, from Lexy!\n`
+      );
+
       // Write the data back to all the connected clients
-      // sockets.forEach(function (sock) {
-      // });
+      sockets.forEach(function (sock) {
+        sock.write(`Helllo, from Lexy!\n`);
+      });
 
       // @dev receive socket information
       // switch(data){
