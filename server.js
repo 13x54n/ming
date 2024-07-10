@@ -2,7 +2,6 @@
  * @author: Lexy <not.so.lexy@gmail.com, 13x54n>
  */
 const net = require("net"); // tcp
-const numCPUs = require("os").cpus().length;
 
 const port = 7070;
 const host = "127.0.0.1";
@@ -55,7 +54,7 @@ server.on("connection", function (sock) {
       // Handle different message types
       if (jsonData.method_name === "broadcast") {
         // Broadcast message to all connected clients
-        broadcastToAll("Some Calculated Output!");
+        broadcastToAll(jsonData.payload);
       } else if (jsonData.method_name === "private_message") {
         // Example of sending a private message to a specific client
         sendPrivateMessage(sock, "This is a private message!");
