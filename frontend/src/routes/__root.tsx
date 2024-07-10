@@ -15,7 +15,7 @@ export const Route = createRootRoute({
         {isLoggedIn ? (
           <>
             <div className="container py-1 mx-3 flex items-center gap-2 text-sm font-medium">
-              <Link className={`px-3 ${activeTab === 'overview' && 'border-b-green-2'}`} to="/">Overview</Link>
+              <Link onClick={() => setActiveTab('overview')} className={`px-3 ${activeTab === 'overview' && 'border-b-green-2'}`} to="/">Overview</Link>
               <Link className={`px-3 ${activeTab === 'overview' && 'border-b-green-2'}`} to="/">Peers</Link>
               <Link className={`px-3 ${activeTab === 'overview' && 'border-b-green-2'}`} to="/">Monitoring</Link>
               <Link className={`px-3 ${activeTab === 'overview' && 'border-b-green-2'}`} to="/">Settings</Link>
