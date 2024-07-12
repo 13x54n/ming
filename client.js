@@ -14,25 +14,28 @@ socket.on("connect", () => {
   console.log(`🤝 Connected to Ming Socket.io Server.`);
 
   // Listen for availablePeers event
-  socket.on("availablePeers", (peerIds) => {
+  const handleAvailablePeers = (peerIds) => {
     console.log("\nAvailable Peers:");
     peerIds.forEach((peerId) => {
       console.log(`- ${peerId}`);
     });
-  });
+    sendMessageToServer();
+    socket.off("availablePeers", handleAvailablePeers);
+  };
+
+  socket.on("availablePeers", handleAvailablePeers);
 
   // Listen for errorMessage event
   socket.on("errorMessage", (error) => {
     console.error("\nError:", error);
+    sendMessageToServer(); // Prompt user to continue after error
   });
-
-  // Start sending messages
-  sendMessageToServer();
 });
 
 socket.on("message", (data) => {
   if (data.from !== socket.id) {
     console.log("\nMessage received from server:", data);
+    sendMessageToServer();
   }
 });
 
@@ -53,9 +56,9 @@ function sendMessageToServer() {
     output: process.stdout,
   });
 
-  rl.question("Enter message to send to server: ", (message) => {
+  rl.question("\nMing: ", (message) => {
+    // Validate or sanitize message here if needed
     socket.emit("message", message); // Send message to server
     rl.close();
-    sendMessageToServer();
   });
 }

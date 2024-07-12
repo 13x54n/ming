@@ -38,7 +38,7 @@ socketServer.on("connection", (socket) => {
 
   // Event handler for receiving messages
   socket.on("message", (data) => {
-    console.log(`\n📦 from ${socket.id}:`, data);
+    console.log(`📦 from ${socket.id}:`, data);
     socketServer.emit("message", { from: socket.id, message: data });
   });
 
