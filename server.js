@@ -11,20 +11,20 @@ const server = http.createServer();
 const socketServer = io(server);
 
 socketServer.on('connection', (socket) => {
-  console.log(`Node connected: ${socket.id}`);
+  console.log(`🐱 Connected: ${socket.id}`);
 
   // Event handler for receiving messages
   socket.on('message', (data) => {
-    console.log(`Message from ${socket.id}:`, data);
+    console.log(`\n📦 from ${socket.id}:`, data);
     
     socketServer.emit('message', data);
   });
 
   socket.on('disconnect', () => {
-    console.log(`Node disconnected: ${socket.id}`);
+    console.log(`😿 Disconnected: ${socket.id}...`);
   });
 });
 
 server.listen(port, host, () => {
-  console.log(`Socket.io Server is running on ${host}:${port}`);
+  console.log(`⚡ Ming Socket.io Server is running on ${host}:${port}`);
 });
