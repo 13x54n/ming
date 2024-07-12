@@ -5,9 +5,9 @@ const io = require("socket.io-client");
 const readline = require("readline");
 
 const socket = io(`https://70c8-65-95-162-187.ngrok-free.app`);
-
+console.log('🔗 Connecting to Server...')
 socket.on("connect", () => {
-  console.log(`Connected to Socket.io server on ${host}:${port}`);
+  console.log(`🤝 Connected to Ming Socket.io Server.`);
 
   sendMessageToServer();
 });
