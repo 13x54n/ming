@@ -3,7 +3,7 @@ const WebSocket = require("ws");
 
 const TCP_PORT = 18943;
 const TCP_HOST = "2.tcp.ngrok.io";
-const WS_PORT = 8080;
+const WS_PORT = 8081;
 
 // TCP Client Setup
 const tcpClient = new net.Socket();
