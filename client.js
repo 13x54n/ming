@@ -2,7 +2,7 @@ const io = require("socket.io-client");
 const readline = require("readline");
 const os = require("os");
 
-const apiKey = "1"; // Replace with the actual API key you want to use
+const apiKey = "2"; // Replace with the actual API key you want to use
 const serverUrl = "https://70c8-65-95-162-187.ngrok-free.app";
 const socket = io(serverUrl, {
   auth: {
@@ -64,8 +64,8 @@ socket.on("connect", () => {
   socket.on("message", (data) => {
     if (data.from !== socket.id) {
       console.log(`\x1b[35m📦 from ${data.from}:\x1b[0m`, data.message); // Magenta color for "Message from" message
-      closeOldReadline();
     }
+    closeOldReadline();
   });
 
   // Handle connection errors
