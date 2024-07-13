@@ -65,6 +65,7 @@ socket.on("connect", () => {
     if (data.from !== socket.id) {
       console.log(`\x1b[35m📦 from ${data.from}:\x1b[0m`, data.message); // Magenta color for "Message from" message
     }
+    closeOldReadline();
     sendMessageToServer();
   });
 
@@ -97,7 +98,8 @@ function sendMessageToServer() {
       process.exit(); // Exit the process if the user types "exit"
     } else {
       socket.emit("message", message); // Send message to server
-      rl.close();
+      closeOldReadline();
+      sendMessageToServer();
     }
   });
 
