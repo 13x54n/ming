@@ -39,7 +39,7 @@ io.use((socket, next) => {
 
 // Event handler for new connections
 io.on("connection", (socket) => {
-  console.log(`\x1b[35m🐱 Connected:\x1b[0m ${socket.id}`); // Magenta color for "Connected" message
+  // console.log(`\x1b[35m🐱 Connected:\x1b[0m ${socket.id}`); // Magenta color for "Connected" message
 
   // Event handler for receiving messages
   socket.on("message", handleMessage);
@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
 
   // Function to handle client disconnect
   function handleDisconnect() {
-    console.log(`\x1b[35m😿 Disconnected:\x1b[0m ${socket.id}`); // Magenta color for "Disconnected" message
+    // console.log(`\x1b[35m😿 Disconnected:\x1b[0m ${socket.id}`); // Magenta color for "Disconnected" message
 
     // Remove client from the map
     connectedClients.forEach((value, key) => {
